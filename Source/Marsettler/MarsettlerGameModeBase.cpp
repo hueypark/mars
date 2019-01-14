@@ -16,18 +16,23 @@ void AMarsettlerGameModeBase::BeginPlay()
 
 void AMarsettlerGameModeBase::Tick(float delta)
 {
-	flatbuffers::FlatBufferBuilder  builder;
+	TArray<uint8> head;
+	head.Init(0, 8);
+	int32 read;
+	socket->Recv(head.GetData(), head.Num(), read);
 
-	auto position = message::Vector(1.0f, 2.0f);
-	auto actor = message::CreateActor(builder, &position);
-	builder.Finish(actor);
+	int32 id, size;
+	FMemory::Memcpy(&id,   &head.GetData()[0], 4);
+	FMemory::Memcpy(&size, &head.GetData()[4], 4);
 
-	uint8_t *buf = builder.GetBufferPointer();
+	UE_LOG(LogTemp, Log, TEXT("Hello tcp! {id: %d, size:%d}"), id, size);
 
-	auto readAcotr = message::GetActor(buf);
-	auto readPosition = readAcotr->Position();
+	TArray<uint8> body;
+	body.Init(0, size);
+	socket->Recv(body.GetData(), body.Num(), read);
 
-	UE_LOG(LogTemp, Log, TEXT("Hello flatbuffers! %f: %f"), readPosition->X(), readPosition->Y());
+	const fbs::Actor* actor = fbs::GetActor(body.GetData());
+	UE_LOG(LogTemp, Log, TEXT("Hello tcp! {id: %lld, x: %f, y: %f}"), actor->Id(), actor->Position()->X(), actor->Position()->Y());
 }
 
 void AMarsettlerGameModeBase::connectSocket(const FIPv4Address& ip, const int32 port)
