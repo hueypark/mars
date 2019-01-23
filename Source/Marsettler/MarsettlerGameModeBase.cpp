@@ -2,6 +2,8 @@
 #include "Networking.h"
 #include "Sockets.h"
 #include "message/actor_generated.h"
+#include "message/constants.h"
+#include "message/login_generated.h"
 
 AMarsettlerGameModeBase::AMarsettlerGameModeBase()
 {
@@ -46,5 +48,18 @@ void AMarsettlerGameModeBase::connectSocket(const FIPv4Address& ip, const int32 
 	if (socket->Connect(*addr))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Socket connected."));
+
+		const MessageID id   = MessageID::Login;
+		const int32     size = sizeof(fbs::Login);
+		TArray<uint8> head;
+		head.Init(0, HeadSize);
+		FMemory::Memcpy(&head.GetData()[0], &id,   4);
+		FMemory::Memcpy(&head.GetData()[4], &size, 4);
+
+		int32 sent;
+		socket->Send(head.GetData(), HeadSize, sent);
+
+		fbs::Login login(12321);
+		socket->Send((const uint8*)(&login), size, sent);
 	}
 }
