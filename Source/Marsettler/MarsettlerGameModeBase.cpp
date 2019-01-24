@@ -1,9 +1,9 @@
 #include "MarsettlerGameModeBase.h"
 #include "Networking.h"
 #include "Sockets.h"
-#include "message/actor_generated.h"
-#include "message/constants.h"
-#include "message/login_generated.h"
+#include "Message/actor_generated.h"
+#include "Message/constants.h"
+#include "Message/login_generated.h"
 
 AMarsettlerGameModeBase::AMarsettlerGameModeBase()
 {
