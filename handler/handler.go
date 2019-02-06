@@ -3,15 +3,17 @@ package handler
 import (
 	"fmt"
 	"log"
-	"net"
 
+	"github.com/hueypark/marsettler/core/net"
 	"github.com/hueypark/marsettler/game/message"
 	"github.com/hueypark/marsettler/game/message/fbs"
 )
 
 // Handle handles message.
-func Handle(conn net.Conn) error {
-	id, body, err := message.ReadMessage(conn)
+func Handle(iClient interface{}) error {
+	client := iClient.(*net.Client)
+
+	id, body, err := message.ReadMessage(client)
 	if err != nil {
 		return err
 	}
