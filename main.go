@@ -5,15 +5,19 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hueypark/mars/conn"
 )
 
 func main() {
-	err := ebiten.Run(update, 800, 600, 1, "Hello world!")
+	ebiten.SetRunnableInBackground(true)
+	err := ebiten.Run(tick, 800, 600, 1, "Hello world!")
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func update(screen *ebiten.Image) error {
+func tick(screen *ebiten.Image) error {
+	conn.SendLogin(0)
+
 	return ebitenutil.DebugPrint(screen, "Hello world!")
 }
