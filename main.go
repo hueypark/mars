@@ -7,13 +7,13 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hueypark/mars/game"
 	"github.com/jakecoffman/cp"
 )
 
 var (
-	space *cp.Space
-	dot   *ebiten.Image
-	ball  *cp.Shape
+	ball *game.Actor
+	dot  *ebiten.Image
 )
 
 func init() {
@@ -22,12 +22,7 @@ func init() {
 }
 
 func main() {
-	space = cp.NewSpace()
-	space.Iterations = 1
-
-	ball = makeBall(100, 100)
-	space.AddBody(ball.Body())
-	space.AddShape(ball)
+	ball = game.NewActor(cp.Vector{})
 
 	ebiten.SetRunnableInBackground(true)
 	err := ebiten.Run(tick, 800, 600, 1, "Marsettler")
@@ -38,14 +33,14 @@ func main() {
 
 func tick(screen *ebiten.Image) error {
 	if ebiten.IsKeyPressed(ebiten.KeyW) {
-		ball.Body().ApplyForceAtLocalPoint(cp.Vector{0, -100}, cp.Vector{0, 0})
+		ball.Body.ApplyForceAtLocalPoint(cp.Vector{0, -100}, cp.Vector{0, 0})
 	}
 
 	if ebiten.IsKeyPressed(ebiten.KeyS) {
-		ball.Body().ApplyForceAtLocalPoint(cp.Vector{0, 100}, cp.Vector{0, 0})
+		ball.Body.ApplyForceAtLocalPoint(cp.Vector{0, 100}, cp.Vector{0, 0})
 	}
 
-	space.Step(1.0 / float64(ebiten.MaxTPS()))
+	game.Space.Step(1.0 / float64(ebiten.MaxTPS()))
 
 	if ebiten.IsDrawingSkipped() {
 		return nil
@@ -59,7 +54,7 @@ func tick(screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	op.ColorM.Scale(200.0/255.0, 200.0/255.0, 200.0/255.0, 1)
 
-	space.EachBody(func(body *cp.Body) {
+	game.Space.EachBody(func(body *cp.Body) {
 		op.GeoM.Reset()
 		op.GeoM.Translate(body.Position().X, body.Position().Y)
 		err := screen.DrawImage(dot, op)
@@ -69,15 +64,4 @@ func tick(screen *ebiten.Image) error {
 	})
 
 	return ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
-}
-
-func makeBall(x, y float64) *cp.Shape {
-	body := cp.NewBody(1.0, cp.INFINITY)
-	body.SetPosition(cp.Vector{x, y})
-
-	shape := cp.NewCircle(body, 0.95, cp.Vector{})
-	shape.SetElasticity(0)
-	shape.SetFriction(0)
-
-	return shape
 }
