@@ -7,19 +7,14 @@ import (
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hueypark/mars/game"
 	"github.com/jakecoffman/cp"
 )
 
 var (
 	ball *game.Actor
-	dot  *ebiten.Image
 )
-
-func init() {
-	dot, _ = ebiten.NewImage(10, 10, ebiten.FilterDefault)
-	_ = dot.Fill(color.White)
-}
 
 func main() {
 	ball = game.NewActor(cp.Vector{})
@@ -32,12 +27,9 @@ func main() {
 }
 
 func tick(screen *ebiten.Image) error {
-	if ebiten.IsKeyPressed(ebiten.KeyW) {
-		ball.Body.ApplyForceAtLocalPoint(cp.Vector{0, -100}, cp.Vector{0, 0})
-	}
-
-	if ebiten.IsKeyPressed(ebiten.KeyS) {
-		ball.Body.ApplyForceAtLocalPoint(cp.Vector{0, 100}, cp.Vector{0, 0})
+	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		ball.SetDesiredPosition(cp.Vector{X: float64(x), Y: float64(y)})
 	}
 
 	game.Space.Step(1.0 / float64(ebiten.MaxTPS()))
@@ -54,10 +46,13 @@ func tick(screen *ebiten.Image) error {
 	op := &ebiten.DrawImageOptions{}
 	op.ColorM.Scale(200.0/255.0, 200.0/255.0, 200.0/255.0, 1)
 
-	game.Space.EachBody(func(body *cp.Body) {
+	game.EachActor(func(actor *game.Actor) {
+		actor.Tick()
+
 		op.GeoM.Reset()
-		op.GeoM.Translate(body.Position().X, body.Position().Y)
-		err := screen.DrawImage(dot, op)
+		width, height := actor.Image().Size()
+		op.GeoM.Translate(actor.Position().X-(float64(width)*0.5), actor.Position().Y-(float64(height)*0.5))
+		err := screen.DrawImage(actor.Image(), op)
 		if err != nil {
 			log.Println(err)
 		}
