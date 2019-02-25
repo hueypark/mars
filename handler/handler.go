@@ -13,7 +13,7 @@ import (
 func Handle(iClient interface{}) error {
 	client := iClient.(*net.Client)
 
-	id, body, err := message.ReadMessage(client)
+	id, body, err := message.ReadMessage(client.Conn())
 	if err != nil {
 		return err
 	}

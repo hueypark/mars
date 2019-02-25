@@ -8,6 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 	"github.com/hajimehoshi/ebiten/inpututil"
+	"github.com/hueypark/mars/conn"
 	"github.com/hueypark/mars/game"
 	"github.com/jakecoffman/cp"
 )
@@ -17,6 +18,8 @@ var (
 )
 
 func main() {
+	conn.SendLogin(0)
+
 	ball = game.NewActor(cp.Vector{})
 
 	ebiten.SetRunnableInBackground(true)
