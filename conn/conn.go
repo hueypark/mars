@@ -15,6 +15,6 @@ func init() {
 
 // SendLogin sens login.
 func SendLogin(id int64) {
-	login := message.MakeLoginMessage(id)
+	login := message.MakeLogin(id)
 	message.Write(client.Conn(), fbs.LoginID, login)
 }
