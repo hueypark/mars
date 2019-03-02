@@ -1,23 +1,11 @@
 package game
 
 import (
-	"image/color"
-	"log"
 	"math"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/jakecoffman/cp"
 )
-
-var image *ebiten.Image
-
-func init() {
-	image, _ = ebiten.NewImage(10, 10, ebiten.FilterDefault)
-	err := image.Fill(color.White)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 // Actor represents basic game actor.
 type Actor struct {
@@ -73,5 +61,5 @@ func (actor *Actor) DesiredSpeed(remainLength float64) float64 {
 
 // Image returns image.
 func (actor *Actor) Image() *ebiten.Image {
-	return image
+	return actorImage
 }

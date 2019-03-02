@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/hueypark/marsettler/core/net"
 	"github.com/hueypark/marsettler/game/message"
@@ -21,14 +20,10 @@ func Handle(iClient interface{}) error {
 	switch id {
 	case fbs.LoginResultID:
 		loginResult := message.NewLoginResult(body)
-		log.Println(loginResult.Id())
+		handleLoginResult(loginResult)
 	case fbs.NodeID:
 		node := message.NewNode(body)
-		log.Println(node.ID())
-		vector := fbs.Vector{}
-		node.Position(&vector)
-		log.Println(vector.X())
-		log.Println(vector.Y())
+		handleNode(node)
 	default:
 		return fmt.Errorf("unhandled message id: %d", id)
 	}
