@@ -10,6 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten/inpututil"
 	"github.com/hueypark/mars/conn"
 	"github.com/hueypark/mars/game"
+	"github.com/hueypark/mars/renderer"
+	"github.com/hueypark/marsettler/core/math/vector"
 	"github.com/jakecoffman/cp"
 	"golang.org/x/image/colornames"
 )
@@ -51,13 +53,7 @@ func tick(screen *ebiten.Image) error {
 	op.ColorM.Scale(200.0/255.0, 200.0/255.0, 200.0/255.0, 1)
 
 	game.ForEachNode(func(node *game.Node) {
-		op.GeoM.Reset()
-		width, height := node.Image().Size()
-		op.GeoM.Translate(node.Position().X-(float64(width)*0.5), node.Position().Y-(float64(height)*0.5))
-		err := screen.DrawImage(node.Image(), op)
-		if err != nil {
-			log.Println(err)
-		}
+		renderer.Reder(screen, node.Image(), node.Position())
 
 		node.ForEachEdge(func(edge *game.Edge) {
 			if toNode := game.GetNode(edge.To); toNode != nil {
@@ -75,13 +71,7 @@ func tick(screen *ebiten.Image) error {
 	game.EachActor(func(actor *game.Actor) {
 		actor.Tick()
 
-		op.GeoM.Reset()
-		width, height := actor.Image().Size()
-		op.GeoM.Translate(actor.Position().X-(float64(width)*0.5), actor.Position().Y-(float64(height)*0.5))
-		err := screen.DrawImage(actor.Image(), op)
-		if err != nil {
-			log.Println(err)
-		}
+		renderer.Reder(screen, actor.Image(), vector.Vector{X: actor.Position().X, Y: actor.Position().Y})
 	})
 
 	return ebitenutil.DebugPrint(screen, fmt.Sprintf("TPS: %0.2f", ebiten.CurrentTPS()))
