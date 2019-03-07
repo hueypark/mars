@@ -1,7 +1,6 @@
 package game
 
 import (
-	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten"
@@ -14,13 +13,13 @@ var (
 )
 
 func init() {
-	actorImage, _ = ebiten.NewImage(10, 10, ebiten.FilterDefault)
-	if err := actorImage.Fill(colornames.Gray); err != nil {
+	actorImage, _ = ebiten.NewImage(30, 30, ebiten.FilterDefault)
+	if err := actorImage.Fill(colornames.White); err != nil {
 		log.Fatal(err)
 	}
 
-	nodeImage, _ = ebiten.NewImage(30, 30, ebiten.FilterDefault)
-	if err := nodeImage.Fill(color.White); err != nil {
+	nodeImage, _ = ebiten.NewImage(50, 50, ebiten.FilterDefault)
+	if err := nodeImage.Fill(colornames.Gray); err != nil {
 		log.Fatal(err)
 	}
 }

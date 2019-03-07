@@ -56,7 +56,7 @@ func (actor *Actor) SetDesiredPosition(position cp.Vector) {
 
 // DesiredSpeed represents desired speed for desired position.
 func (actor *Actor) DesiredSpeed(remainLength float64) float64 {
-	return math.Min(remainLength, 100)
+	return math.Min(remainLength, 500)
 }
 
 // Image returns image.
